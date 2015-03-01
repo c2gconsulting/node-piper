@@ -104,7 +104,6 @@ Response from Piper for new connection:
     "__v": 0
   }
 }
-
 ...
 ```
 
