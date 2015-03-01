@@ -26,7 +26,7 @@
     Create an `index.js` file in myapp directory containing:
     
     ```javascript
-    var piper = require('node-piper');
+    var piper = require('piper-mgr');
     var ACCESS_TOKEN = "IQ77NWUPUMNBYEUEKRTWU3VDR5YSLHTA"; // A unique access token to authenticate your request
     
     console.log("Managing piper services with the Piper API");
@@ -122,7 +122,7 @@ The `registerClient` function registers a new client and activates a slack conne
     2. A JSON object containing the Piper response
     
 ```javascript
-var piper = require('node-piper');
+var piper = require('piper-mgr');
 var client = {
     "name": "ACME Company",
     "handle": "acme",
@@ -148,7 +148,7 @@ The `connect` function creates a slack connection for a registered client. The f
     2. A JSON object containing the Piper response
     
 ```javascript
-var piper = require('node-piper');
+var piper = require('piper-mgr');
 piper.connect(ACCESS_TOKEN, "acme", function (err, res) {
     console.log("Response from Piper for new connection: ");
     if (err) console.log("Error: ", err);
@@ -166,7 +166,7 @@ The `disconnect` function ends an active connection. The function takes 3 argume
     2. A JSON object containing the Piper response
     
 ```javascript
-var piper = require('node-piper');
+var piper = require('piper-mgr');
 piper.disconnect(ACCESS_TOKEN, "acme", function (err, res) {
     console.log("Response from Piper for end connection: ");
     if (err) console.log("Error: ", err);
@@ -184,7 +184,7 @@ The `getClient` function retrieves the details of a registered client. The funct
     2. A JSON object containing the Piper response
     
 ```javascript
-var piper = require('node-piper');
+var piper = require('piper-mgr');
 piper.getClient(ACCESS_TOKEN, "acme", function (err, res) {
     console.log("Response from Piper for retrieve client details: ");
     if (err) console.log("Error: ", err);
@@ -201,7 +201,7 @@ The `getClients` function retrieves an array of all registered clients. The func
     2. A JSON object containing the Piper response
     
 ```javascript
-var piper = require('node-piper');
+var piper = require('piper-mgr');
 piper.getClients(ACCESS_TOKEN, function (err, res) {
     console.log("Response from Piper for retrieve all client details: ");
     if (err) console.log("Error: ", err);
@@ -219,7 +219,7 @@ The `getConnection` function retrieves the details of an active connection for a
     2. A JSON object containing the Piper response
     
 ```javascript
-var piper = require('node-piper');
+var piper = require('piper-mgr');
 piper.getConnect(ACCESS_TOKEN, "acme", function (err, res) {
     console.log("Response from Piper for retrieve connection details: ");
     if (err) console.log("Error: ", err);
@@ -236,7 +236,7 @@ The `getConnections` function retrieves an array of all registered connections. 
     2. A JSON object containing the Piper response
     
 ```javascript
-var piper = require('node-piper');
+var piper = require('piper-mgr');
 piper.getConnections(ACCESS_TOKEN, function (err, res) {
     console.log("Response from Piper for retrieve all active connections: ");
     if (err) console.log("Error: ", err);
