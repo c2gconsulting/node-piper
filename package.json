@@ -1,0 +1,35 @@
+{
+    "name": "node-piper",
+    "version": "0.1.0",
+    "private": false,
+    "homepage": "https://github.com/c2gconsulting/node-piper",
+    "description":"Node module to request Piper APIs",
+    "repository": "https://github.com/c2gconsulting/node-piper",
+    "bugs": {
+        "url": "https://github.com/c2gconsulting/node-piper/issues"
+    },
+    "keywords": [
+        "piper",
+        "automation",
+        "home",
+        "siri",
+        "wit.ai",
+        "nlp",
+        "speech",
+        "intent",
+        "erp"
+    ],
+    "scripts": {
+        "test": "node_modules/mocha/bin/_mocha test/*_test.js --ignore-leaks -t 20000 --reporter spec"
+    },
+    "dependencies": {
+        "request": "2.42.0",
+        "underscore": "1.7.0"
+    },
+    "devDependencies": {
+        "mocha": "1.21.4",
+        "nock": "0.47.0",
+        "chai": "1.9.1"
+    },
+    "main": "./index.js"
+}
