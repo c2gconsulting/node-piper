@@ -17,7 +17,7 @@
     
     ```json
       "dependencies": {
-        "node-piper": "0.1.0"	
+        "piper-mgr": "0.1.0"	
       },	
     ```
     
