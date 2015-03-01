@@ -1,10 +1,8 @@
 ## Quick start
 
-1. You need to create an [Wit instance first](https://wit.ai/docs/console/quickstart).
+1. Install [Node.JS](http://nodejs.org/) on your computer.
 
-2. Install [Node.JS](http://nodejs.org/) on your computer.
-
-3. Setup your project 
+2. Setup your project 
 
     Create a new Node.JS app :
     
@@ -15,87 +13,99 @@
     ...
     ```
     
-    Add node-wit as a dependencies in your package.json
+    Add node-piper as a dependency in your package.json
     
     ```json
       "dependencies": {
-        "node-wit": "1.1.0"	
+        "node-piper": "0.1.0"	
       },	
     ```
     
     Execute `npm install` in your current folder to fetch the dependencies
     
-    We will send an audio file to Wit.AI
-    
-    You can use [SoX](http://sox.sourceforge.net) to record WAV files from the command line.
-    `brew install sox` on OSX and `apt-get install sox` on ubuntu.
-    The following options will create a Wit-ready WAV file (press Ctrl+C to stop recording):
-    
-    ```bash
-    sox -d -b 16 -c 1 -r 16k sample.wav
-    ```
-    
-    Create a `index.js` file in myapp directory containing:
+    Create an `index.js` file in myapp directory containing:
     
     ```javascript
-    var wit = require('node-wit');
-    var fs = require('fs');
-    var ACCESS_TOKEN = "IQ77NWUPUMNBYEUEKRTWU3VDR5YSLHTA";
+    var piper = require('node-piper');
+    var ACCESS_TOKEN = "IQ77NWUPUMNBYEUEKRTWU3VDR5YSLHTA"; // A unique access token to authenticate your request
     
-    console.log("Sending text & audio to Wit.AI");
+    console.log("Managing piper services with the Piper API");
     
-    wit.captureTextIntent(ACCESS_TOKEN, "Hello world", function (err, res) {
-        console.log("Response from Wit for text input: ");
+    var client = {
+        "name": "ACME Company",
+        "handle": "acme",
+        "slackToken": "xoxb-AB0923F-09LSDKFJWOFKLS-LKALIWE099",
+        "adminContact": "Martin Don",
+        "adminEmail": "mdon@acme.com",
+      }
+
+    piper.registerClient(ACCESS_TOKEN, client, function (err, res) {
+        console.log("Response from Piper for registerClient: ");
         if (err) console.log("Error: ", err);
         console.log(JSON.stringify(res, null, " "));
     });
     
-    var stream = fs.createReadStream('sample.wav');
-    wit.captureSpeechIntent(ACCESS_TOKEN, stream, "audio/wav", function (err, res) {
-        console.log("Response from Wit for audio stream: ");
+    piper.connect(ACCESS_TOKEN, "acme", function (err, res) {
+        console.log("Response from Piper for new connection: ");
         if (err) console.log("Error: ", err);
         console.log(JSON.stringify(res, null, " "));
     });
+
+    piper.disconnect(ACCESS_TOKEN, "acme", function (err, res) {
+        console.log("Response from Piper for end connection: ");
+        if (err) console.log("Error: ", err);
+        console.log(JSON.stringify(res, null, " "));
+    });
+
+    piper.getClient(ACCESS_TOKEN, "acme", function (err, res) {
+        console.log("Response from Piper for retrieve client details: ");
+        if (err) console.log("Error: ", err);
+        console.log(JSON.stringify(res, null, " "));
+    });
+
+    piper.getClients(ACCESS_TOKEN, function (err, res) {
+        console.log("Response from Piper for retrieve all client details: ");
+        if (err) console.log("Error: ", err);
+        console.log(JSON.stringify(res, null, " "));
+    });
+
+    piper.getConnection(ACCESS_TOKEN, "acme", function (err, res) {
+        console.log("Response from Piper for retrieve connection details: ");
+        if (err) console.log("Error: ", err);
+        console.log(JSON.stringify(res, null, " "));
+    });
+
+    piper.getConnections(ACCESS_TOKEN, function (err, res) {
+        console.log("Response from Piper for retrieve all active connections: ");
+        if (err) console.log("Error: ", err);
+        console.log(JSON.stringify(res, null, " "));
+    });
+
     ```
 
 4. Start your app
 
 ```bash
 $ node index.js
-Sending text & audio to Wit.AI
-Response from Wit for text input:
+Response from Piper for registerClient:
+Client acme successfully registered and activated
+
+Response from Piper for new connection:
 {
- "msg_id": "b46d4a08-1e2e-43f4-b30a-aaa7bccb88e3",
- "_text": "Hello world",
- "outcomes": [
-  {
-   "_text": "Hello world",
-   "intent": "greetings_hi",
-   "entities": {},
-   "confidence": 0.929
+ "status": "Connected",
+ "client": {
+    "_id": "54f1d37614ef3039468cd086",
+    "name": "ACME Company",
+    "slackHandle": "acme",
+    "slackToken": "xoxb-AB0923F-09LSDKFJWOFKLS-LKALIWE099",
+    "adminContact": "Martin Don",
+    "adminEmail": "mdon@acme.com"
+    "isActive": true,
+    "__v": 0
   }
- ]
 }
-Response from Wit for audio stream:
-{
- "msg_id": "83c14e47-13cb-4ad4-9f5e-723cd47016be",
- "_text": "what's the weather in New York",
- "outcomes": [
-  {
-   "_text": "what's the weather in New York",
-   "intent": "weather",
-   "entities": {
-    "location": [
-     {
-      "suggested": true,
-      "value": "New York"
-     }
-    ]
-   },
-   "confidence": 1
-  }
- ]
-}
+
+...
 ```
 
 ## Examples
@@ -103,43 +113,133 @@ Response from Wit for audio stream:
 
 ## API
 
-### captureTextIntent
+### registerClient
 
-The `captureTextIntent` function returns the meaning extracted from the text
-input. The function takes 3 parameters:
-- `access_token`: Your access token for your instance
-- `text`: The text input you want to extract the meaning of
+The `registerClient` function registers a new client and activates a slack connection. The function takes 3 parameters:
+- `access_token`: Your access token for authentication
+- `client`: JSON object with details of the client you want to register
 - `callback(error, response)`: A callback function get 2 arguments:
     1. An `error` when applicable
-    2. A JSON object containing the Wit.AI response
+    2. A JSON object containing the Piper response
     
 ```javascript
-var wit = require('node-wit');
-wit.captureTextIntent(ACCESS_TOKEN, "Hello world", function (err, res) {
-    console.log("Response from Wit for text input: ");
+var piper = require('node-piper');
+var client = {
+    "name": "ACME Company",
+    "handle": "acme",
+    "slackToken": "xoxb-AB0923F-09LSDKFJWOFKLS-LKALIWE099",
+    "adminContact": "Martin Don",
+    "adminEmail": "mdon@acme.com",
+  }
+
+piper.registerClient(ACCESS_TOKEN, client, function (err, res) {
+    console.log("Response from Piper for registerClient: ");
     if (err) console.log("Error: ", err);
     console.log(JSON.stringify(res, null, " "));
 });
 ```
 
-### captureSpeechIntent
+### connect
 
-The `captureSpeechIntent` function returns the meaning extracted from the audio
-input. The function takes 4 arguments:
+The `connect` function creates a slack connection for a registered client. The function takes 3 arguments:
 - `access_token`: Your access token for your instance
-- `stream`: The audio stream you want to extract the meaning of
-- `content-type`: The content-type of your audio stream (`audio/wav`, `audio/mpeg3`, 
-`audio/raw;encoding=unsigned-integer;bits=16;rate=8000;endian=big`, ...)
+- `handle`: The unique slack handle of the clients slack instance <slackhandle>.slack.com
 - `callback(error, response)`: A callback function get 2 arguments:
     1. An `error` when applicable
-    2. A JSON object containing the Wit.AI response
+    2. A JSON object containing the Piper response
     
 ```javascript
-var wit = require('node-wit');
-var fs = require('fs');
-var stream = fs.createReadStream('sample.wav');
-wit.captureSpeechIntent(ACCESS_TOKEN, stream, "audio/wav", function (err, res) {
-    console.log("Response from Wit for audio stream: ");
+var piper = require('node-piper');
+piper.connect(ACCESS_TOKEN, "acme", function (err, res) {
+    console.log("Response from Piper for new connection: ");
+    if (err) console.log("Error: ", err);
+    console.log(JSON.stringify(res, null, " "));
+});
+```
+
+### disconnect
+
+The `disconnect` function ends an active connection. The function takes 3 arguments:
+- `access_token`: Your access token for your instance
+- `handle`: The unique slack handle of the clients slack instance <slackhandle>.slack.com
+- `callback(error, response)`: A callback function get 2 arguments:
+    1. An `error` when applicable
+    2. A JSON object containing the Piper response
+    
+```javascript
+var piper = require('node-piper');
+piper.disconnect(ACCESS_TOKEN, "acme", function (err, res) {
+    console.log("Response from Piper for end connection: ");
+    if (err) console.log("Error: ", err);
+    console.log(JSON.stringify(res, null, " "));
+});
+```
+
+### getClient
+
+The `getClient` function retrieves the details of a registered client. The function takes 3 arguments:
+- `access_token`: Your access token for your instance
+- `handle`: The unique slack handle of the clients slack instance <slackhandle>.slack.com
+- `callback(error, response)`: A callback function get 2 arguments:
+    1. An `error` when applicable
+    2. A JSON object containing the Piper response
+    
+```javascript
+var piper = require('node-piper');
+piper.getClient(ACCESS_TOKEN, "acme", function (err, res) {
+    console.log("Response from Piper for retrieve client details: ");
+    if (err) console.log("Error: ", err);
+    console.log(JSON.stringify(res, null, " "));
+});
+```
+
+### getClients
+
+The `getClients` function retrieves an array of all registered clients. The function takes 2 arguments:
+- `access_token`: Your access token for your instance
+- `callback(error, response)`: A callback function get 2 arguments:
+    1. An `error` when applicable
+    2. A JSON object containing the Piper response
+    
+```javascript
+var piper = require('node-piper');
+piper.getClients(ACCESS_TOKEN, function (err, res) {
+    console.log("Response from Piper for retrieve all client details: ");
+    if (err) console.log("Error: ", err);
+    console.log(JSON.stringify(res, null, " "));
+});
+```
+
+### getConnection
+
+The `getConnection` function retrieves the details of an active connection for a registered client. The function takes 3 arguments:
+- `access_token`: Your access token for your instance
+- `handle`: The unique slack handle of the clients slack instance <slackhandle>.slack.com
+- `callback(error, response)`: A callback function get 2 arguments:
+    1. An `error` when applicable
+    2. A JSON object containing the Piper response
+    
+```javascript
+var piper = require('node-piper');
+piper.getConnect(ACCESS_TOKEN, "acme", function (err, res) {
+    console.log("Response from Piper for retrieve connection details: ");
+    if (err) console.log("Error: ", err);
+    console.log(JSON.stringify(res, null, " "));
+});
+```
+
+### getConnections
+
+The `getConnections` function retrieves an array of all registered connections. The function takes 2 arguments:
+- `access_token`: Your access token for your instance
+- `callback(error, response)`: A callback function get 2 arguments:
+    1. An `error` when applicable
+    2. A JSON object containing the Piper response
+    
+```javascript
+var piper = require('node-piper');
+piper.getConnections(ACCESS_TOKEN, function (err, res) {
+    console.log("Response from Piper for retrieve all active connections: ");
     if (err) console.log("Error: ", err);
     console.log(JSON.stringify(res, null, " "));
 });
